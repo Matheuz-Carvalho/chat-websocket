@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat WebSocket</title>
+  <style>
+    body { font-family: Arial, sans-serif; }
+    #messages { border: 1px solid #ccc; height: 300px; overflow-y: scroll; padding: 10px; }
+    #messageInput { width: 80%; padding: 10px; }
+    #sendButton { padding: 10px 20px; }
+  </style>
+</head>
+<body>
+<h1>Chat WebSocket</h1>
+
+<div id="messages"></div>
+
+<input type="text" id="messageInput" placeholder="Digite sua mensagem" />
+<button id="sendButton">Enviar</button>
+
+<script>
+  const socket = new WebSocket('ws://localhost:12345');
+
+  const messagesDiv = document.getElementById('messages');
+  socket.onmessage = function(event) {
+      const message = document.createElement('div');
+      message.textContent = event.data;
+      messagesDiv.appendChild(message);
+  };
+
+  const sendButton = document.getElementById('sendButton');
+  const messageInput = document.getElementById('messageInput');
+
+  sendButton.addEventListener('click', function() {
+      const message = messageInput.value;
+      if (message) {
+          socket.send(message);
+          messageInput.value = '';
+      }
+  });
+
+  window.onbeforeunload = function() {
+      socket.close();
+  };
+</script>
+</body>
+</html>
